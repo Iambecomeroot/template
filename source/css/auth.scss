@@ -1,0 +1,50 @@
+@import "vars";
+
+//////////
+// auth //
+//////////
+
+.auth{
+  left: 50%;
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
+  transform: translateX(-50%);
+}
+  .auth__section{
+    padding: 20px 50px;
+    border-radius: 3px;
+  }
+    .auth__title{
+      display: block;
+      padding: 10px 5px;
+      border-bottom: 1px solid $grey;
+    }
+    .auth__error{
+      color: $red;
+      margin-top: 15px;
+      display: block;
+    }
+    .auth__fields{
+      margin: 30px 0;
+    }
+      .auth__label.auth__label{
+        margin-top: 20px;
+      }
+        .auth__input{
+          width: 100%;
+        }
+
+  .login{
+    position: relative;
+    &:after{
+      right: -1px;
+      top: 100px;
+      bottom: 100px;
+      width: 2px;
+      content: ' ';
+      position: absolute;
+      background: $blue;
+
+    }
+  }

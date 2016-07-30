@@ -1,12 +1,12 @@
-"use strict";
+'use strict'
 
-var express  = require('express');
-var router   = express.Router();
+const express  = require('express')
+const router   = express.Router()
+const mongoose = require('mongoose')
+const q        = require('q')
 
-var data     = require('../functions/data.js');
+router.get('/', (req, res, next) => {
+  res.render('index', {session: req.session})
+})
 
-router.get('/', function(req, res, next){
-	res.render('index', data(req));
-});
-
-module.exports = router;
+module.exports = router

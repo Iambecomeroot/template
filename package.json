@@ -2,43 +2,63 @@
   "name": "template",
   "version": "0.0.0",
   "description": "Kind of like my Yeoman",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Marcel Robitaille <marcelrobitaille11@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Marcel-Robitaille/WaterBerry/issues"
-  },
-  "homepage": "http://marcel-robitaille.github.io/WaterBerry/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Marcel-Robitaille/WaterBerry.git"
+    "url": "git@github.com:Marcel-Robitaille/template.git"
+  },
+  "author": "Marcel Robitaille <marcelrobitaille11@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Marcel-Robitaille/template/issues"
+  },
+  "homepage": "https://github.com/Marcel-Robitaille/template#readme",
+  "dependencies": {
+    "axios": "0.13.1",
+    "bcrypt-as-promised": "1.1.0",
+    "body-parser": "1.15.2",
+    "compression": "1.6.2",
+    "connect-mongo": "1.3.2",
+    "dbust": "1.0.2",
+    "express": "4.14.0",
+    "express-session": "1.14.0",
+    "fs-promise": "0.5.0",
+    "lodash": "4.14.1",
+    "mongoose": "4.5.7",
+    "pug": "2.0.0-beta4",
+    "q": "1.4.1",
+    "validator": "5.5.0"
   },
   "devDependencies": {
-    "del": "^1.1.1",
-    "gulp": "^3.8.11",
-    "gulp-autoprefixer": "^2.1.0",
-    "gulp-clean": "^0.3.1",
-    "gulp-concat": "^2.5.2",
-    "gulp-jshint": "^1.10.0",
-    "gulp-minify-css": "^1.0.0",
-    "gulp-newer": "^0.5.0",
-    "gulp-notify": "^2.2.0",
-    "gulp-plumber": "^1.0.0",
-    "gulp-rev": "^3.0.1",
-    "gulp-run-sequence": "^0.3.2",
-    "gulp-sass": "^1.3.3",
-    "gulp-sourcemaps": "^1.5.1",
-    "gulp-svg-sprite": "^1.1.0",
-    "gulp-svgo": "^0.1.1",
-    "gulp-tap": "^0.1.3",
-    "gulp-uglify": "^1.1.0",
-    "gulp-util": "^3.0.4",
-    "jshint-stylish": "^1.0.1"
-  },
-  "dependencies": {
-    "compression": "^1.4.3"
+    "babel-core": "6.11.4",
+    "babel-loader": "6.2.4",
+    "babel-preset-es2015": "6.9.0",
+    "browser-sync": "2.13.0",
+    "del": "2.2.1",
+    "gulp": "3.9.1",
+    "gulp-autoplumb": "1.0.3",
+    "gulp-autoprefixer": "3.1.0",
+    "gulp-clean": "0.3.2",
+    "gulp-cssnano": "2.1.2",
+    "gulp-if": "2.0.1",
+    "gulp-imagemin": "3.0.2",
+    "gulp-load-plugins": "1.2.4",
+    "gulp-plumber": "1.1.0",
+    "gulp-rename": "1.2.2",
+    "gulp-rev": "7.1.0",
+    "gulp-sass": "2.3.2",
+    "gulp-sourcemaps": "1.6.0",
+    "gulp-svg-sprite": "1.3.3",
+    "gulp-svgmin": "1.2.2",
+    "gulp-tap": "0.1.3",
+    "gulp-util": "3.0.7",
+    "imagemin-jpegoptim": "5.0.0",
+    "morgan": "1.7.0",
+    "normalize-css": "2.3.1",
+    "purecss": "0.6.0",
+    "webpack": "1.13.1"
   }
 }
