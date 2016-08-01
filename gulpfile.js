@@ -17,6 +17,6 @@ buildTasks.push('images')
 
 gulp.task('build', buildTasks)
 
-gulp.task('watch', Object.keys(gulp.tasks).filter((task) => {
+gulp.task('watch', Object.keys(gulp.tasks).filter(task => {
   return /watch-.*/gi.test(task)
 }))
