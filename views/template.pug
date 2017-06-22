@@ -5,12 +5,14 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
     title Document
-    link(rel="stylesheet", href="/css/global.css")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto")
+    link(rel="stylesheet", href=asset("/css/global.css"))
     block styles
     
   body
-    //- include _header
-    
     .content
       block content
+
+    block scripts
+      script(data-svg-url=svgurl, src=asset("/js/main.js"))#svg-loader
+
+

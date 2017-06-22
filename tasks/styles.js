@@ -1,69 +1,55 @@
-'use strict'
-
-const $    = require('gulp-load-plugins')()
 const path = require('path')
 
-const styles  = {
-  'global.scss': {
-    files: [
-      './node_modules/normalize-css/normalize.css',
-      './node_modules/purecss/build/pure.css',
-      'source/css/global.scss',
-      'source/css/_components.scss',
-      'source/css/_vars.scss',
-      'source/css/_base.scss',
-    ],
-    dir: 'css/'
-  },
+const $ = require('gulp-load-plugins')()
+const bs = require('browser-sync')
+const sassGraph = require('sass-graph')
 
-  'auth.scss': {
-    files: [
-      'source/css/auth.scss',
-      'source/css/_vars.scss',
-    ],
-    dir: 'css/'
-  },
-
-  'settings.scss': {
-    files: [
-      './source/css/settings.scss',
-      'source/css/_vars.scss',
-    ],
-    dir: 'css/'
-  },
-}
+const styles = [ 'global' ]
+const tasks = []
+const buildTasks = []
 
 module.exports = gulp => {
-  Object.keys(styles).forEach(mainFile => {
+  styles.map(style => {
 
-    gulp.task(mainFile, () => {
-      return gulp.src('./source/' + styles[mainFile].dir + mainFile)
+    const task = `css-${style}`
+    const file = `./source/css/${style}.scss`
+    const files = Object.keys(sassGraph.parseFile(file, { globImports: true, exclude: /node_modules/ }).index)
+
+    tasks.push(task)
+
+    gulp.task(`watch-${task}`, () => gulp.watch(files, [ task ]))
+
+    gulp.task(task, () => {
+      return gulp.src(file)
         .pipe($.sourcemaps.init())
-        .pipe($.sass())
-        .pipe($.cssnano())
-        .pipe($.autoprefixer())
+        .pipe($.sassGlob())
+        .pipe($.sass().on('error', $.sass.logError))
         .pipe($.sourcemaps.write('maps/'))
-        .pipe(gulp.dest('public/' + styles[mainFile].dir))
+        .pipe(gulp.dest('public/css/'))
         .pipe($.if(
           file => path.extname(file.path) === '.css',
-          require('browser-sync').stream()
+          bs.stream()
         ))
     })
 
-    gulp.task('build-' + mainFile, () => {
-      return gulp.src('./source/' + styles[mainFile].dir + mainFile)
+    const buildTask = `build-${task}`
+    buildTasks.push(buildTask)
+
+    gulp.task('build-' + style, () => {
+      return gulp.src(`./source/css/${style}.scss`)
+        .pipe($.sassGlob())
         .pipe($.sass())
         .pipe($.cssnano())
         .pipe($.autoprefixer())
         .pipe($.rev())
-        .pipe(require('dbust').gulp())
-        .pipe(gulp.dest('public/' + styles[mainFile].dir))
-    })
-
-    gulp.task('watch-' + mainFile, () => {
-      gulp.watch(styles[mainFile].files, [mainFile])
+        .pipe($.dbust())
+        .pipe(gulp.dest('build/css/'))
+        .pipe($.gzip())
+        .pipe(gulp.dest('build/css/'))
     })
   })
 
-  gulp.task('css', Object.keys(styles))
+  gulp.task('css', tasks)
+  gulp.task('build-css', buildTasks)
 }
+

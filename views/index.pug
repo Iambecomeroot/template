@@ -1,14 +1,2 @@
 extends ./template.pug
 
-block styles
-  if !session.signedIn
-    link(rel="stylesheet", href="/css/auth.css")
-
-block content
-  if session.signedIn
-
-    script(data-svg-url=svgurl, src='/js/main.js')#svg-loader
-    
-  else
-    include _auth
-    

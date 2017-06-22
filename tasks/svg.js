@@ -32,7 +32,8 @@ module.exports = gulp => {
       }))
       .pipe($.rename('sprite.svg'))
       .pipe($.rev())
+      .pipe($.dbust())
       .pipe(gulp.dest('public'))
-      .pipe(require('dbust').gulp())
   })
 }
+

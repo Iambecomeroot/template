@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+[[ -n "$1" ]] && host="$1" || host="ip"
+
+log () { tput setaf 2; echo "\n$1\n"; tput sgr0 }
+
+log "Building..."
+gulp build | sed 's/^/  /' || exit 1
+
+log "Copying..."
+rsync -acv --delete --stats --progress --exclude node_modules --exclude public --exclude .git --exclude '*.swp' ./ $host:$dir | sed 's/^/  /' || exit 1
+
+log "Installing modules..."
+ssh "$host" "cd $dir; $yarn install --production" | sed 's/^/  /'
+
+

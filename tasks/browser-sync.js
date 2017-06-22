@@ -1,18 +1,23 @@
 const bs = require('browser-sync')
 
+const CONFIG = require('../config.js')
+
+const ReloadTimeout = 250
+
 module.exports = gulp => {
   gulp.task('browser-sync', () => {
     bs.init(null, {
-      proxy: 'http://localhost:1278',
+      proxy: `http://localhost:${CONFIG.PORT}`,
+      ghostMode: false,
+      browser: 'firefox',
       open: false,
       port: 4000,
       files: [
         'views/**/*.pug',
-        'source/**/*.pug',
-        'source/js/*',
         'source/images/*'
       ],
-      ghostMode: false
     })
+    gulp.watch('./routes/**/*.js', () => setTimeout(bs.reload, ReloadTimeout))
   })
 }
+

@@ -1,29 +1,47 @@
-const _             = require('lodash')
-const util         = require('gulp-util')
-const process       = require('process')
-const webpack       = require('webpack')
-const webpackConfig = require('../webpack.config.js')
+const browserSync = require('browser-sync')
+const webpack = require('webpack')
+const gutil = require('gulp-util')
+const moment = require('moment')
+const chalk = require('chalk')
 
-const parsedConfig = {
-  debug: webpackConfig(true),
-  prod: webpackConfig(false)
-}
+const handler = (err, stats, options) => {
+  options = Object.assign({
+    log: true,
+  }, options)
 
-function webpackHandler(cb){
-  return function(err, stats){
-    if(err) throw new util.pluginError('webpack', err)
-    cb()
+  const errors = stats.compilation.errors
+  if (errors.length) {
+    const err = errors[0].error
+    console.log()
+    console.log(chalk.red.bold(err.message))
+    console.log(chalk.red(err.stack))
+    console.log()
+    return
+  }
+
+  browserSync.reload()
+
+  if (options.log) {
+    const time = moment
+      .duration(stats.endTime - stats.startTime)
+      .asSeconds()
+      .toFixed(2)
+    gutil.log(`Finished '${chalk.cyan('webpack')}' after ${chalk.magenta(`${time} s`)}`)
   }
 }
 
-const files = _.flatten(_.values(parsedConfig.debug.entry))
+const config = require(__dirname + '/../webpack.config.js')
+const compiler = () => webpack(config())
 
 module.exports = gulp => {
-  gulp.task('js', cb => webpack(parsedConfig.debug, webpackHandler(cb)) )
+  gulp.task('js', () => compiler().watch({
+    aggregateTimeout: 0,
+    ignored: /node_modules/,
+  }, handler))
 
-  gulp.task('build-js', cb => webpack(parsedConfig.prod, webpackHandler(cb)) )
-
-  gulp.task('watch-js', () => {
-    gulp.watch(files, ['js'])
-  })
+  gulp.task('build-js', cb => compiler().run((err, stats) => {
+    handler(err, stats, { log: false })
+    cb()
+  }))
 }
+

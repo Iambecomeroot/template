@@ -1,13 +1,17 @@
-// Border box all the things
 html {
   box-sizing: border-box;
 }
-*, *:before, *:after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
-// Font family for all the things
-html, button, input, select, textarea,
-.pure-g [class *= "pure-u"] {
-    font-family: Roboto, sans-serif;
+html,
+button,
+input,
+select,
+textarea,
+.pure-g [class *= 'pure-u'] {
+  font-family: Roboto, sans-serif;
 }

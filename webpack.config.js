@@ -1,66 +1,74 @@
-'use strict';
+const path = require('path')
+const process = require('process')
 
-const path    = require('path');
-const process = require('process');
+const webpack = require('webpack')
+const glob = require('glob')
 
-const q       = require('q');
-const del     = require('del');
-const webpack = require('webpack');
+module.exports = () => {
 
-const debug   = process.env.NODE_ENV !== "production";
+  const debug = process.env.NODE_ENV === 'development'
 
-function config(debug){
-  const plugins = [ new webpack.optimize.CommonsChunkPlugin('main', debug ? 'main.js' : '[name]-[chunkhash].js', ['settings']) ];
+  const plugins = [
+    new require('hard-source-webpack-plugin')(),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'common', filename: debug ? 'common.js' : 'common-[chunkhash].js' }),
+  ]
 
-  if(!debug) plugins.push( /* Yes, all that just so I can have my trailing comma */ ...[
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
+  if (!debug) plugins.push(...[
     new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
-    require('dbust').webpack,
-  ]);
+    new require('compression-webpack-plugin')(),
+    new require('webpack-dbust')({ base: __dirname, autosave: process.env.WEBPACK_SOURCE !== 'gulp' }),
+  ])
+
+  if (process.env.WEBPACK_ANALYZE === 'true') {
+    plugins.push(new require('webpack-bundle-analyzer').BundleAnalyzerPlugin())
+  }
 
   return {
-    devtool: debug ? "inline-sourcemap" : null,
+    devtool: debug ? 'source-map' : false,
+    plugins,
     entry: {
-      'main': [
-        './source/js/main.js',
-        './source/js/loadsvg.js',
-        // './source/js/dropdowns.js',
+      main: glob.sync('./source/js/main/*'),
+      common: [
+        'regenerator-runtime/runtime',
+        'dialog-polyfill',
+        './source/js/_loadsvg.js',
       ],
-
-      'auth': [
-        './source/js/auth.js'
-      ],
-
-      // 'settings': [
-      //   './source/js/settings.js',
-      //   './source/js/loadsvg.js',
-      //   './source/js/dropdowns.js',
-      // ]
     },
     output: {
-      path: './public/js',
-      filename: debug ? '[name].js' : '[name]-[chunkhash].js'
+
+      // Set output path to 'public' for debug and 'build' for prod
+      path: path.join(__dirname, debug ? 'public' : 'build', 'js'),
+
+      // Don't change filename for debug
+      // Cache bust filename for prod
+      filename: debug ? '[name].js' : '[name]-[chunkhash].js',
     },
-    module: debug ? {} : {
-      loaders: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          loader: 'babel',
-          query: {
-            presets: ['es2015']
-          }
-        }
-      ],
+    module: {
+      rules: [{
+        test: /\.js$/,
+        exclude: [
+          path.resolve(__dirname, 'node_modules'),
+        ],
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              'babel-plugin-lodash',
+              'babel-plugin-transform-class-properties',
+            ].map(require.resolve),
+            presets: [ 'env' ],
+          },
+        },
+      }, {
+        test: /\.pug$/,
+        exclude: [
+          path.resolve(__dirname, 'node_modules'),
+        ],
+        use: {
+          loader: 'pug-loader',
+        },
+      }],
     },
-    plugins,
   }
 }
 
-// So I can run from terminal and from gulp
-if(/webpack\.js$/.test(require.main.filename)){
-  module.exports = config(debug);
-}else{
-  module.exports = config;
-}

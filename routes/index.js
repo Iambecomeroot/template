@@ -1,12 +1,11 @@
-'use strict'
+const express = require('express')
+const router = express.Router()
 
-const express  = require('express')
-const router   = express.Router()
-const mongoose = require('mongoose')
-const q        = require('q')
+const locals = require('../views/locals/')
 
-router.get('/', (req, res, next) => {
-  res.render('index', {session: req.session})
+router.get('/', (req, res) => {
+  res.render('index', Object.assign({ session: req.session }, locals))
 })
 
 module.exports = router
+
