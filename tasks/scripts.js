@@ -1,8 +1,9 @@
-const browserSync = require('browser-sync')
-const webpack = require('webpack')
-const gutil = require('gulp-util')
-const moment = require('moment')
+const gulp = require('gulp')
 const chalk = require('chalk')
+const moment = require('moment')
+const gutil = require('gulp-util')
+const webpack = require('webpack')
+const browserSync = require('browser-sync')
 
 const handler = (err, stats, options) => {
   options = Object.assign({
@@ -33,15 +34,17 @@ const handler = (err, stats, options) => {
 const config = require(__dirname + '/../webpack.config.js')
 const compiler = () => webpack(config())
 
-module.exports = gulp => {
-  gulp.task('js', () => compiler().watch({
+gulp.task('js', () => {
+  compiler().watch({
     aggregateTimeout: 0,
     ignored: /node_modules/,
-  }, handler))
+  }, handler)
+})
 
-  gulp.task('build-js', cb => compiler().run((err, stats) => {
+gulp.task('build-js', cb => {
+  compiler().run((err, stats) => {
     handler(err, stats, { log: false })
     cb()
-  }))
-}
+  })
+})
 

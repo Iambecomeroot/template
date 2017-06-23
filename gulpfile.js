@@ -2,16 +2,16 @@ const process = require('process')
 
 const _ = require('lodash/fp')
 const del = require('del')
+const gulp = require('gulp')
 const glob = require('glob')
 const dbust = require('dbust')
-const gulp = require('gulp-autoplumb')
-const runSequence = require('run-sequence')
+const runSequence = require('run-sequence').use(gulp)
+
+glob.sync('./tasks/*.js').map(require)
 
 process.env.WEBPACK_SOURCE = 'gulp'
 
-glob.sync(__dirname + '/tasks/*.js')
-  .map(require)
-  .map(m => m(gulp))
+glob.sync(__dirname + '/tasks/*.js').map(require)
 
 gulp.task('default', ['css', 'js', 'svg', 'browser-sync', 'watch'])
 

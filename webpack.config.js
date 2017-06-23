@@ -4,23 +4,33 @@ const process = require('process')
 const webpack = require('webpack')
 const glob = require('glob')
 
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const Dbust = require('webpack-dbust')
+
 module.exports = () => {
 
   const debug = process.env.NODE_ENV === 'development'
 
   const plugins = [
-    new require('hard-source-webpack-plugin')(),
     new webpack.optimize.CommonsChunkPlugin({ name: 'common', filename: debug ? 'common.js' : 'common-[chunkhash].js' }),
   ]
 
-  if (!debug) plugins.push(...[
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
-    new require('compression-webpack-plugin')(),
-    new require('webpack-dbust')({ base: __dirname, autosave: process.env.WEBPACK_SOURCE !== 'gulp' }),
-  ])
+  if (debug) {
+    plugins.push(...[
+      new HardSourceWebpackPlugin(),
+    ])
+  } else {
+    plugins.push(...[
+      new CompressionPlugin(),
+      new Dbust({ base: __dirname, autosave: process.env.WEBPACK_SOURCE !== 'gulp' }),
+      new webpack.optimize.UglifyJsPlugin({ comments: false, sourcemap: false }),
+    ])
+  }
 
   if (process.env.WEBPACK_ANALYZE === 'true') {
-    plugins.push(new require('webpack-bundle-analyzer').BundleAnalyzerPlugin())
+    plugins.push(new BundleAnalyzerPlugin())
   }
 
   return {
@@ -56,7 +66,7 @@ module.exports = () => {
               'babel-plugin-lodash',
               'babel-plugin-transform-class-properties',
             ].map(require.resolve),
-            presets: [ 'env' ],
+            presets: { env: { targets:  { browsers: [ 'last 2 version' ] } } },
           },
         },
       }, {
