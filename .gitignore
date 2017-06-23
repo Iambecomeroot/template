@@ -4,4 +4,6 @@ build
 config.js
 manifest.json
 *.swp
+*.swo
+Session.vim
 
